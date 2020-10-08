@@ -10,7 +10,7 @@ import (
 	"github.com/b4fun/battery/archive"
 )
 
-func ExampleCreateZipArchive_Compress() {
+func ExampleCreateZipArchive() {
 	c := &archive.CreateZipArchive{
 		SourceDir: "testdata",
 	}
@@ -32,7 +32,7 @@ func ExampleCreateZipArchive_Compress() {
 	// /singlefile/test.txt
 }
 
-func ExampleCreateZipArchive_BasePath() {
+func ExampleCreateZipArchive_basePath() {
 	c := &archive.CreateZipArchive{
 		SourceDir: "testdata",
 		BasePath:  "testbasepath",
@@ -58,7 +58,7 @@ func ExampleCreateZipArchive_BasePath() {
 	// testbasepath/singlefile/test.txt
 }
 
-func ExampleCreateZipArchive_SkipFile() {
+func ExampleCreateZipArchive_skipFile() {
 	c := &archive.CreateZipArchive{
 		SourceDir: "./testdata",
 		FilterFile: func(path string, info os.FileInfo) bool {
