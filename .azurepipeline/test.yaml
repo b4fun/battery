@@ -22,4 +22,3 @@ jobs:
     parameters:
       go_versions: ['1.15.2', '1.14.9']
       os: linux
-      name_postfix: '_linux'
