@@ -26,6 +26,12 @@ func TestRepeatedStringSlice(t *testing.T) {
 			reason:         "empty value",
 		},
 		{
+			input:          []string{"-name", ""},
+			expectedValue:  []string{""},
+			expectedString: "",
+			reason:         "empty flag value",
+		},
+		{
 			input:          []string{"-name=foo"},
 			expectedValue:  []string{"foo"},
 			expectedString: "foo",
@@ -48,6 +54,83 @@ func TestRepeatedStringSlice(t *testing.T) {
 	for _, c := range cases {
 		t.Logf("running case: %s", c.reason)
 		var v RepeatedStringSlice
+		fs := createFS(&v)
+		err := fs.Parse(c.input)
+		if err != nil {
+			t.Errorf("unexpected flag parse error: %s", err)
+		}
+
+		if actual := v.String(); actual != c.expectedString {
+			t.Errorf("string output, expected=%s, got=%s", c.expectedString, actual)
+		}
+		if c.expectedValue != nil {
+			actualValue := []string(v)
+			if len(actualValue) != len(c.expectedValue) {
+				t.Errorf("value, expected=%q, got=%q", c.expectedValue, actualValue)
+			}
+			for i, v := range actualValue {
+				if v != c.expectedValue[i] {
+					t.Errorf("value, expected=%q, got=%q", c.expectedValue, actualValue)
+				}
+			}
+		}
+	}
+}
+
+func TestCommaSeparatedStringSlice(t *testing.T) {
+	cases := []struct {
+		input          []string
+		expectedValue  []string
+		expectedString string
+		reason         string
+	}{
+		{
+			input:          nil,
+			expectedValue:  nil,
+			expectedString: "<empty>",
+			reason:         "empty value",
+		},
+		{
+			input:          []string{"-name", ""},
+			expectedValue:  []string{""},
+			expectedString: "",
+			reason:         "empty flag value",
+		},
+		{
+			input:          []string{"-name=foo"},
+			expectedValue:  []string{"foo"},
+			expectedString: "foo",
+			reason:         "single value",
+		},
+		{
+			input:          []string{"-name=foo,bar"},
+			expectedValue:  []string{"foo", "bar"},
+			expectedString: "foo,bar",
+			reason:         "multiple values",
+		},
+		{
+			input:          []string{"-name=foo,bar,foo"},
+			expectedValue:  []string{"foo", "bar", "foo"},
+			expectedString: "foo,bar,foo",
+			reason:         "duplicated values",
+		},
+		{
+			input:          []string{"-name=foo,bar,"},
+			expectedValue:  []string{"foo", "bar", ""},
+			expectedString: "foo,bar,",
+			reason:         "trailing space",
+		},
+		{
+			input:          []string{"-name=foo", "-name=foo,bar"},
+			expectedValue:  []string{"foo", "bar"},
+			expectedString: "foo,bar",
+			reason:         "last write wins",
+		},
+	}
+
+	for _, c := range cases {
+		t.Logf("running case: %s", c.reason)
+		var v CommaSeparatedStringSlice
 		fs := createFS(&v)
 		err := fs.Parse(c.input)
 		if err != nil {
