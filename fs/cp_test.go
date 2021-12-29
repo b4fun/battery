@@ -56,6 +56,7 @@ func TestCopyAllToDir(t *testing.T) {
 		if destStat.Size() != srcStat.Size() {
 			return fmt.Errorf("expected %s to have size %d, got %d", srcPath, srcStat.Size(), destStat.Size())
 		}
+		t.Logf("%s %s\n", destStat.Name(), destStat.Mode())
 
 		return nil
 	})
