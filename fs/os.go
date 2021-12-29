@@ -10,7 +10,7 @@ type writableOSFS string
 var _ WritableFS = writableOSFS("")
 
 func (root writableOSFS) OpenFile(name string, flag int, perm os.FileMode) (WriteableFile, error) {
-	return os.OpenFile(root.fullPath(name), flag, perm)
+	return os.OpenFile(root.fullPath(name), flag, perm|0200) // 0200 is for granting write access to the owner
 }
 
 func (root writableOSFS) MkdirAll(path string, perm os.FileMode) error {
